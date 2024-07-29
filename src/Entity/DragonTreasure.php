@@ -12,6 +12,7 @@ use App\Repository\DragonTreasureRepository;
 use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DragonTreasureRepository::class)]
 #[ApiResource(
@@ -23,6 +24,12 @@ use Doctrine\ORM\Mapping as ORM;
         new Post(),
         new Put(),
         new Patch()
+    ],
+    normalizationContext: [
+        'groups' => ['treasure:read']
+    ],
+    denormalizationContext: [
+        'groups' => ['treasure:write']
     ]
 )]
 class DragonTreasure
@@ -33,18 +40,22 @@ class DragonTreasure
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['treasure:read', 'treasure:write'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['treasure:read', 'treasure:write'])]
     private ?string $description = null;
 
     /**
      * The estimated value of treasure, in gold coins.
      */
     #[ORM\Column]
+    #[Groups(['treasure:read', 'treasure:write'])]
     private ?int $value = null;
 
     #[ORM\Column]
+    #[Groups(['treasure:read', 'treasure:write'])]
     private ?int $coolFactor = null;
 
     #[ORM\Column]
@@ -56,7 +67,7 @@ class DragonTreasure
     }
 
     #[ORM\Column]
-    private ?bool $isPublished = null;
+    private ?bool $isPublished = false;
 
     public function getId(): ?int
     {
@@ -80,6 +91,14 @@ class DragonTreasure
         return $this->description;
     }
 
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    #[Groups(['treasure:write'])]
     public function setTextDescription(?string $description): static
     {
         $this->description = nl2br($description);
@@ -111,11 +130,14 @@ class DragonTreasure
         return $this;
     }
 
+    /**
+     * Non human representation of when treasure was retrieved.
+     */
+    #[Groups(['treasure:read'])]
     public function getPlunderedAt(): ?\DateTimeImmutable
     {
         return $this->plunderedAt;
     }
-
 
     /**
      * Represents plundering time for humans.
