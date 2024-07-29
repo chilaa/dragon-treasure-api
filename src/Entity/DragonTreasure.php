@@ -31,7 +31,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     ],
     denormalizationContext: [
         'groups' => ['treasure:write']
-    ]
+    ],
+    paginationItemsPerPage: 10,
 )]
 class DragonTreasure
 {
@@ -140,6 +141,13 @@ class DragonTreasure
     public function getPlunderedAt(): ?\DateTimeImmutable
     {
         return $this->plunderedAt;
+    }
+
+    public function setPlunderedAt(\DateTimeImmutable $plunderedAt): self
+    {
+        $this->plunderedAt = $plunderedAt;
+
+        return $this;
     }
 
     /**
