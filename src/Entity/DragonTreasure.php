@@ -27,7 +27,9 @@ use function Symfony\Component\String\u;
     shortName: 'Treasure',
     description: 'A rare and valuable treasure.',
     operations: [
-        new Get(),
+        new Get(
+            normalizationContext: ['groups' => ['treasure:read', 'treasure:item:get']]
+        ),
         new GetCollection(),
         new Post(),
         new Put(),
@@ -54,7 +56,7 @@ class DragonTreasure
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['treasure:read', 'treasure:write'])]
+    #[Groups(['treasure:read', 'treasure:write', 'user:read'])]
     #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2, max: 50, maxMessage: 'Use 50 or less characters')]
@@ -70,7 +72,7 @@ class DragonTreasure
      * The estimated value of treasure, in gold coins.
      */
     #[ORM\Column]
-    #[Groups(['treasure:read', 'treasure:write'])]
+    #[Groups(['treasure:read', 'treasure:write', 'user:read'])]
     #[ApiFilter(RangeFilter::class)]
     #[Assert\GreaterThanOrEqual(0)]
     private ?int $value = 0;
@@ -97,6 +99,7 @@ class DragonTreasure
     #[ORM\ManyToOne(inversedBy: 'dragonTreasures')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['treasure:read', 'treasure:write'])]
+    #[Assert\Valid]
     private ?User $owner = null;
 
     public function getId(): ?int

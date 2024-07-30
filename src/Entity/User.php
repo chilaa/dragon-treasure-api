@@ -45,7 +45,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups(['user:read', 'user:write', 'treasure:item:get', 'treasure:write'])]
+    #[Assert\NotBlank]
     private ?string $username = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: DragonTreasure::class)]
@@ -141,6 +142,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, DragonTreasure>
      */
+    #[Groups(['user:read'])]
     public function getDragonTreasures(): Collection
     {
         return $this->dragonTreasures;
