@@ -48,6 +48,7 @@ use function Symfony\Component\String\u;
     paginationItemsPerPage: 10
 )]
 #[ApiFilter(PropertyFilter::class)]
+#[ApiFilter(SearchFilter::class, properties: ['owner.username' => 'partial'])]
 class DragonTreasure
 {
     #[ORM\Id]
@@ -56,7 +57,7 @@ class DragonTreasure
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['treasure:read', 'treasure:write', 'user:read'])]
+    #[Groups(['treasure:read', 'treasure:write', 'user:read', 'user:write'])]
     #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 2, max: 50, maxMessage: 'Use 50 or less characters')]
@@ -72,7 +73,7 @@ class DragonTreasure
      * The estimated value of treasure, in gold coins.
      */
     #[ORM\Column]
-    #[Groups(['treasure:read', 'treasure:write', 'user:read'])]
+    #[Groups(['treasure:read', 'treasure:write', 'user:read', 'user:write'])]
     #[ApiFilter(RangeFilter::class)]
     #[Assert\GreaterThanOrEqual(0)]
     private ?int $value = 0;
@@ -136,7 +137,7 @@ class DragonTreasure
         return $this;
     }
 
-    #[Groups(['treasure:write'])]
+    #[Groups(['treasure:write', 'user:write'])]
     #[SerializedName('description')]
     public function setTextDescription(?string $description): static
     {
