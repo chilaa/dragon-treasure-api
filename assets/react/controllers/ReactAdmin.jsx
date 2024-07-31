@@ -1,6 +1,6 @@
-import {HydraAdmin} from "@api-platform/admin";
-import React from "react";
+import { HydraAdmin } from "@api-platform/admin";
+import React from 'react';
 
 export default (props) => (
-    <HydraAdmin entrypoint={props.entryPoint}/>
+  <HydraAdmin entrypoint={props.entrypoint} />
 );

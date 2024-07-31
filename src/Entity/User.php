@@ -2,19 +2,20 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
@@ -27,15 +28,14 @@ use Symfony\Component\Validator\Constraints as Assert;
     uriVariables: [
         'treasure_id' => new Link(
             fromProperty: 'owner',
-            fromClass: DragonTreasure::class
-        )
+            fromClass: DragonTreasure::class,
+        ),
     ],
-    normalizationContext: [
-        'groups' => ['user:read']
-    ]
+    normalizationContext: ['groups' => ['user:read']],
 )]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email.')]
-#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username.')]
+#[ApiFilter(PropertyFilter::class)]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['username'], message: 'It looks like another dragon took your username. ROAR!')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -65,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: DragonTreasure::class, cascade: ['persist'], orphanRemoval: true)]
-    #[Groups('user:write', 'user:read')]
+    #[Groups(['user:read', 'user:write'])]
     #[Assert\Valid]
     private Collection $dragonTreasures;
 
@@ -84,7 +84,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
@@ -113,7 +113,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): static
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
 
@@ -128,7 +128,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -138,7 +138,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function eraseCredentials(): void
+    public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
@@ -149,7 +149,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->username;
     }
 
-    public function setUsername(string $username): static
+    public function setUsername(string $username): self
     {
         $this->username = $username;
 
@@ -159,28 +159,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, DragonTreasure>
      */
-    #[Groups(['user:read'])]
     public function getDragonTreasures(): Collection
     {
         return $this->dragonTreasures;
     }
 
-    public function addDragonTreasure(DragonTreasure $dragonTreasure): static
+    public function addDragonTreasure(DragonTreasure $treasure): self
     {
-        if (!$this->dragonTreasures->contains($dragonTreasure)) {
-            $this->dragonTreasures->add($dragonTreasure);
-            $dragonTreasure->setOwner($this);
+        if (!$this->dragonTreasures->contains($treasure)) {
+            $this->dragonTreasures->add($treasure);
+            $treasure->setOwner($this);
         }
 
         return $this;
     }
 
-    public function removeDragonTreasure(DragonTreasure $dragonTreasure): static
+    public function removeDragonTreasure(DragonTreasure $treasure): self
     {
-        if ($this->dragonTreasures->removeElement($dragonTreasure)) {
+        if ($this->dragonTreasures->removeElement($treasure)) {
             // set the owning side to null (unless already changed)
-            if ($dragonTreasure->getOwner() === $this) {
-                $dragonTreasure->setOwner(null);
+            if ($treasure->getOwner() === $this) {
+                $treasure->setOwner(null);
             }
         }
 
