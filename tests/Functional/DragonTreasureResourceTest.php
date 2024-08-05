@@ -124,7 +124,7 @@ class DragonTreasureResourceTest extends ApiTestCase
                     'owner' => '/api/users/'.$user2->getId(),
                 ]
             ])
-            ->assertStatus(403);
+            ->assertStatus(422);
     }
 
     public function testAdminCanPatchToEditTreasure(): void
@@ -165,8 +165,7 @@ class DragonTreasureResourceTest extends ApiTestCase
             ->assertStatus(200)
             ->assertJsonMatches('value', 4132)
             ->assertJsonMatches('isPublished', false)
-            ->assertJsonMatches('isMine', true)
-        ;
+            ->assertJsonMatches('isMine', true);
 
     }
 
