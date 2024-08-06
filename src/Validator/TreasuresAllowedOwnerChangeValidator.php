@@ -35,11 +35,11 @@ class TreasuresAllowedOwnerChangeValidator extends ConstraintValidator
             $originalId = $originalData['owner_id'];
             $newOwnerId = $dragonTreasure->getOwner()->getId();
 
-            if (!$originalId || $originalId === $newOwnerId) {
+            if ($this->security->isGranted('ROLE_ADMIN')) {
                 return;
             }
 
-            if ($this->security->isGranted('ROLE_ADMIN')) {
+            if (!$originalId || $originalId === $newOwnerId) {
                 return;
             }
 
