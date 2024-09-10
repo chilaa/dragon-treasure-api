@@ -16,5 +16,5 @@ class TreasuresAllowedOwnerChange extends Constraint
      * Any public properties become valid options for the annotation.
      * Then, use these in your validator class.
      */
-    public string $message = 'You can not change treasure owner.';
+    public string $message = 'One of the treasures illegally changed owners.';
 }

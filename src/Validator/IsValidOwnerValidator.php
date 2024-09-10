@@ -21,18 +21,19 @@ class IsValidOwnerValidator extends ConstraintValidator
             return;
         }
 
+        // constraint is only meant to be used above a User property
         assert($value instanceof User);
 
         $user = $this->security->getUser();
         if (!$user) {
-            throw new \LogicException('IsValidOwner should not be called by an anonymous user.');
+            throw new \LogicException('IsOwnerValidator should only be used when a user is logged in.');
         }
 
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return;
         }
 
-        if ($user !== $value) {
+        if ($value !== $user) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation();
         }

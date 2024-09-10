@@ -18,7 +18,6 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Repository\DragonTreasureRepository;
 use App\Validator\IsValidOwner;
-use App\Validator\TreasuresAllowedOwnerChange;
 use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -38,13 +37,15 @@ use function Symfony\Component\String\u;
             ],
         ),
         new GetCollection(),
-        new Post(security: 'is_granted("ROLE_TREASURE_CREATE")'),
+        new Post(
+            security: 'is_granted("ROLE_TREASURE_CREATE")',
+        ),
         new Patch(
             security: 'is_granted("EDIT", object)',
         ),
         new Delete(
-            security: 'is_granted("ROLE_ADMIN")'
-        )
+            security: 'is_granted("ROLE_ADMIN")',
+        ),
     ],
     formats: [
         'jsonld',
@@ -61,8 +62,8 @@ use function Symfony\Component\String\u;
     ],
     paginationItemsPerPage: 10,
     extraProperties: [
-        'standard_put' => true
-    ]
+        'standard_put' => true,
+    ],
 )]
 #[ApiResource(
     uriTemplate: '/users/{user_id}/treasures.{_format}',
@@ -78,8 +79,8 @@ use function Symfony\Component\String\u;
         'groups' => ['treasure:read'],
     ],
     extraProperties: [
-        'standard_put' => true
-    ]
+        'standard_put' => true,
+    ],
 )]
 #[ApiFilter(PropertyFilter::class)]
 #[ApiFilter(SearchFilter::class, properties: [
@@ -133,7 +134,6 @@ class DragonTreasure
     #[Groups(['treasure:read', 'treasure:write'])]
     #[Assert\Valid]
     #[IsValidOwner]
-    #[TreasuresAllowedOwnerChange]
     #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?User $owner = null;
 

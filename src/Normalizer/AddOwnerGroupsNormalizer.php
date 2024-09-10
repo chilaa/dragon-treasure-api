@@ -16,12 +16,8 @@ class AddOwnerGroupsNormalizer implements NormalizerInterface, SerializerAwareIn
     {
     }
 
-    public function normalize(
-        mixed $object,
-        string $format = null,
-        array $context = []
-    ): array|string|int|float|bool|\ArrayObject|null {
-
+    public function normalize(mixed $object, string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
+    {
         if ($object instanceof DragonTreasure && $this->security->getUser() === $object->getOwner()) {
             $context['groups'][] = 'owner:read';
         }
@@ -37,7 +33,7 @@ class AddOwnerGroupsNormalizer implements NormalizerInterface, SerializerAwareIn
 
     public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
     {
-        return $this->normalizer->supportsNormalization($data, $format, $context);
+        return $this->normalizer->supportsNormalization($data, $format);
     }
 
     public function setSerializer(SerializerInterface $serializer): void
@@ -45,5 +41,15 @@ class AddOwnerGroupsNormalizer implements NormalizerInterface, SerializerAwareIn
         if ($this->normalizer instanceof SerializerAwareInterface) {
             $this->normalizer->setSerializer($serializer);
         }
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        if (method_exists($this->normalizer, 'getSupportedTypes')) {
+            return $this->normalizer->getSupportedTypes($format);
+        }
+
+        // backported from next version of API Platform
+        return 'jsonld' === $format ? ['*' => true] : [];
     }
 }

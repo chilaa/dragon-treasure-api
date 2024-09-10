@@ -9,13 +9,10 @@ use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsDecorator('api_platform.doctrine.orm.state.persist_processor')]
-class UserHashPasswordProcessor implements ProcessorInterface
+class UserHashPasswordStateProcessor implements ProcessorInterface
 {
-    public function __construct(
-        private ProcessorInterface $innerProcessor,
-        private UserPasswordHasherInterface $userPasswordHasher
-    ) {
-
+    public function __construct(private ProcessorInterface $innerProcessor, private UserPasswordHasherInterface $userPasswordHasher)
+    {
     }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void

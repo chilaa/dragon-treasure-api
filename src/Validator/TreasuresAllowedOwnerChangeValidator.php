@@ -5,16 +5,13 @@ namespace App\Validator;
 use App\Entity\DragonTreasure;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 class TreasuresAllowedOwnerChangeValidator extends ConstraintValidator
 {
-    public function __construct(
-        private EntityManagerInterface $entityManager,
-        private Security $security
-    ) {
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
     }
 
     public function validate($value, Constraint $constraint): void
@@ -25,6 +22,7 @@ class TreasuresAllowedOwnerChangeValidator extends ConstraintValidator
             return;
         }
 
+        // meant to be used above a Collection field
         assert($value instanceof Collection);
 
         $unitOfWork = $this->entityManager->getUnitOfWork();
@@ -32,17 +30,14 @@ class TreasuresAllowedOwnerChangeValidator extends ConstraintValidator
             assert($dragonTreasure instanceof DragonTreasure);
 
             $originalData = $unitOfWork->getOriginalEntityData($dragonTreasure);
-            $originalId = $originalData['owner_id'];
+            $originalOwnerId = $originalData['owner_id'];
             $newOwnerId = $dragonTreasure->getOwner()->getId();
 
-            if ($this->security->isGranted('ROLE_ADMIN')) {
+            if (!$originalOwnerId || $originalOwnerId === $newOwnerId) {
                 return;
             }
 
-            if (!$originalId || $originalId === $newOwnerId) {
-                return;
-            }
-
+            // the owner is being changed
             $this->context->buildViolation($constraint->message)
                 ->addViolation();
         }

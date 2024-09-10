@@ -11,10 +11,8 @@ use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 #[AsDecorator('api_platform.doctrine.orm.state.persist_processor')]
 class DragonTreasureSetOwnerProcessor implements ProcessorInterface
 {
-    public function __construct(
-        private ProcessorInterface $innerProcessor,
-        private Security $security
-    ) {
+    public function __construct(private ProcessorInterface $innerProcessor, private Security $security)
+    {
     }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void

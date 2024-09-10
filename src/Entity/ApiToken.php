@@ -17,7 +17,7 @@ class ApiToken
     public const SCOPES = [
         self::SCOPE_USER_EDIT => 'Edit User',
         self::SCOPE_TREASURE_CREATE => 'Create Treasures',
-        self::SCOPE_TREASURE_EDIT => 'Edit Treasures'
+        self::SCOPE_TREASURE_EDIT => 'Edit Treasures',
     ];
 
     #[ORM\Id]
