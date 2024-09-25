@@ -39,6 +39,7 @@ class DragonTreasureResourceTest extends ApiTestCase
             "owner",
             "shortDescription",
             "plunderedAtAgo",
+            "isMine"
         ]);
     }
 
@@ -166,7 +167,7 @@ class DragonTreasureResourceTest extends ApiTestCase
     {
         $admin = UserFactory::new()->asAdmin()->create();
         $treasure = DragonTreasureFactory::createOne([
-            'isPublished' => false
+            'isPublished' => true
         ]);
 
         $this->browser()
@@ -178,7 +179,7 @@ class DragonTreasureResourceTest extends ApiTestCase
             ])
             ->assertStatus(200)
             ->assertJsonMatches('value', 4132)
-            ->assertJsonMatches('isPublished', false);
+            ->assertJsonMatches('isPublished', true);
 
     }
 
