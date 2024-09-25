@@ -14,9 +14,9 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Repository\DragonTreasureRepository;
+use App\State\DragonTreasureStateProcessor;
 use App\State\DragonTreasureStateProvider;
 use App\Validator\IsValidOwner;
 use Carbon\Carbon;
@@ -40,9 +40,11 @@ use function Symfony\Component\String\u;
         new GetCollection(),
         new Post(
             security: 'is_granted("ROLE_TREASURE_CREATE")',
+            processor: DragonTreasureStateProcessor::class
         ),
         new Patch(
             security: 'is_granted("EDIT", object)',
+            processor: DragonTreasureStateProcessor::class
         ),
         new Delete(
             security: 'is_granted("ROLE_ADMIN")',
@@ -128,7 +130,7 @@ class DragonTreasure
 
     #[ORM\Column]
     #[ApiFilter(BooleanFilter::class)]
-    #[Groups(['admin:read', 'admin:write', 'owner:read'])]
+    #[Groups(['admin:read', 'admin:write', 'owner:read', 'treasure:write'])]
     private bool $isPublished = false;
 
     #[ORM\ManyToOne(inversedBy: 'dragonTreasures')]
