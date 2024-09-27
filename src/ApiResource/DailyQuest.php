@@ -20,6 +20,7 @@ use Symfony\Component\Serializer\Annotation\Ignore;
         new Get(),
         new Patch(),
     ],
+    paginationItemsPerPage: 10,
     provider: DailyQuestStateProvider::class,
     processor: DailyQuestStateProcessor::class
 )]
