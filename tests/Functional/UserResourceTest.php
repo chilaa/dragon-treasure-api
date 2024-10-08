@@ -4,6 +4,7 @@ namespace App\Tests\Functional;
 
 use App\Factory\DragonTreasureFactory;
 use App\Factory\UserFactory;
+use Zenstruck\Browser\Json;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 class UserResourceTest extends ApiTestCase
@@ -17,10 +18,15 @@ class UserResourceTest extends ApiTestCase
                 'json' => [
                     'username' => 'Smaug',
                     'email' => 'test@test.com',
-                    'password' => 'pass'
+                    'password' => 'pass',
+                    'flameThrowingDistance' => 999
                 ]
             ])
             ->assertStatus(201)
+            ->use(function (Json $json) {
+                $json->assertMissing('password');
+                $json->assertMissing('id');
+            })
             ->post('/login', [
                 'json' => [
                     'email' => 'test@test.com',
@@ -39,11 +45,13 @@ class UserResourceTest extends ApiTestCase
             ->patch('/api/users/'.$user->getId(), [
                 'json' => [
                     'username' => 'Toothless',
+                    'id' => 55
                 ],
                 'headers' => [
                     'Content-type' => 'application/merge-patch+json'
                 ]
             ])
+            ->dump()
             ->assertStatus(200);
     }
 
