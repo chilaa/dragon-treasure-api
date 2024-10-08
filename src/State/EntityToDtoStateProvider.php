@@ -9,20 +9,23 @@ use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
-use App\ApiResource\UserApi;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfonycasts\MicroMapper\MicroMapperInterface;
 
 class EntityToDtoStateProvider implements ProviderInterface
 {
     public function __construct(
         #[Autowire(service: CollectionProvider::class)] private ProviderInterface $collectionProvider,
-        #[Autowire(service: ItemProvider::class)] private ProviderInterface $itemProvider
+        #[Autowire(service: ItemProvider::class)] private ProviderInterface $itemProvider,
+        private MicroMapperInterface $microMapper,
     ) {
 
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
+        $resourceClass = $operation->getClass();
+
         if ($operation instanceof CollectionOperationInterface) {
 
             $entities = $this->collectionProvider->provide($operation, $uriVariables, $context);
@@ -30,7 +33,7 @@ class EntityToDtoStateProvider implements ProviderInterface
 
             $dtos = [];
             foreach ($entities as $entity) {
-                $dtos[] = $this->mapEntityToDto($entity);
+                $dtos[] = $this->mapEntityToDto($entity, $resourceClass);
             }
 
             return new TraversablePaginator(
@@ -45,19 +48,12 @@ class EntityToDtoStateProvider implements ProviderInterface
         if (!$entity) {
             return null;
         }
-        return $this->mapEntityToDto($entity);
+        return $this->mapEntityToDto($entity, $resourceClass);
     }
 
 
-    private function mapEntityToDto(object $entity): object
+    private function mapEntityToDto(object $entity, string $resourceClass): object
     {
-        $dto = new UserApi();
-        $dto->id = $entity->getId();
-        $dto->email = $entity->getEmail();
-        $dto->username = $entity->getUsername();
-        $dto->dragonTreasures = $entity->getPublishedDragonTreasures()->toArray();
-        $dto->flameThrowingDistance = rand(1, 10);
-
-        return $dto;
+        return $this->microMapper->map($entity, $resourceClass);
     }
 }

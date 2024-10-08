@@ -64,9 +64,9 @@ class UserApi
     /**
      * @var array<int, DragonTreasure>
      */
-    #[ApiProperty(readable: false)]
+    #[ApiProperty(writable: false)]
     public array $dragonTreasures = [];
 
-    #[ApiProperty(readable: false)]
+    #[ApiProperty(writable: false)]
     public ?int $flameThrowingDistance = 0;
 }
