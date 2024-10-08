@@ -18,8 +18,7 @@ class UserResourceTest extends ApiTestCase
                 'json' => [
                     'username' => 'Smaug',
                     'email' => 'test@test.com',
-                    'password' => 'pass',
-                    'flameThrowingDistance' => 999
+                    'password' => 'pass'
                 ]
             ])
             ->assertStatus(201)
@@ -51,7 +50,6 @@ class UserResourceTest extends ApiTestCase
                     'Content-type' => 'application/merge-patch+json'
                 ]
             ])
-            ->dump()
             ->assertStatus(200);
     }
 
