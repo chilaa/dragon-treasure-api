@@ -40,7 +40,7 @@ class DragonTreasureApiToEntityMapper implements MapperInterface
         assert($entity instanceof DragonTreasure);
 
         if ($dto->owner) {
-            dd($dto);
+//            dd($dto);
         } else {
             $entity->setOwner($this->security->getUser());
         }

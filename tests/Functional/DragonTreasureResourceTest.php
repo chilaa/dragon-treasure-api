@@ -120,7 +120,8 @@ class DragonTreasureResourceTest extends ApiTestCase
             ->patch('/api/treasures/'.$treasure->getId(), [
                 'json' => [
                     'value' => 4321
-                ]
+                ],
+                'headers' => ['Content-Type' => 'application/merge-patch+json']
             ])
             ->assertStatus(200)
             ->assertJsonMatches('value', 4321);
@@ -138,7 +139,8 @@ class DragonTreasureResourceTest extends ApiTestCase
             ->patch('/api/treasures/'.$treasure->getId(), [
                 'json' => [
                     'value' => 4321
-                ]
+                ],
+                'headers' => ['Content-Type' => 'application/merge-patch+json']
             ])
             ->assertStatus(200)
             ->assertJsonMatches('value', 4321);
@@ -150,7 +152,8 @@ class DragonTreasureResourceTest extends ApiTestCase
             ->patch('/api/treasures/'.$treasure->getId(), [
                 'json' => [
                     'value' => 55555
-                ]
+                ],
+                'headers' => ['Content-Type' => 'application/merge-patch+json']
             ])
             ->assertStatus(403);
 
@@ -159,7 +162,8 @@ class DragonTreasureResourceTest extends ApiTestCase
             ->patch('/api/treasures/'.$treasure->getId(), [
                 'json' => [
                     'owner' => '/api/users/'.$user2->getId(),
-                ]
+                ],
+                'headers' => ['Content-Type' => 'application/merge-patch+json']
             ])
             ->assertStatus(422);
     }
@@ -176,7 +180,8 @@ class DragonTreasureResourceTest extends ApiTestCase
             ->patch('/api/treasures/'.$treasure->getId(), [
                 'json' => [
                     'value' => 4132
-                ]
+                ],
+                'headers' => ['Content-Type' => 'application/merge-patch+json']
             ])
             ->assertStatus(200)
             ->assertJsonMatches('value', 4132)
@@ -197,7 +202,8 @@ class DragonTreasureResourceTest extends ApiTestCase
             ->patch('/api/treasures/'.$treasure->getId(), [
                 'json' => [
                     'value' => 4132
-                ]
+                ],
+                'headers' => ['Content-Type' => 'application/merge-patch+json']
             ])
             ->assertStatus(200)
             ->assertJsonMatches('value', 4132)
@@ -220,7 +226,8 @@ class DragonTreasureResourceTest extends ApiTestCase
             ->patch('/api/treasures/'.$treasure->getId(), [
                 'json' => [
                     'isPublished' => true
-                ]
+                ],
+                'headers' => ['Content-Type' => 'application/merge-patch+json']
             ])
             ->assertStatus(200)
             ->assertJsonMatches('isPublished', true);
