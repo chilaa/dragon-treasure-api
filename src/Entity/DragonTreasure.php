@@ -153,19 +153,4 @@ class DragonTreasure
 
         return $this;
     }
-
-    public function isOwnedByAuthenticatedUser(): bool
-    {
-        if (!isset($this->isOwnedByAuthenticatedUser)) {
-            throw new \LogicException('You must set setIsOwnedByAuthenticatedUser() before calling this.');
-        }
-
-        return $this->isOwnedByAuthenticatedUser;
-    }
-
-    public function setIsOwnedByAuthenticatedUser(bool $isOwnedByAuthenticatedUser): void
-    {
-        $this->isOwnedByAuthenticatedUser = $isOwnedByAuthenticatedUser;
-    }
-
 }
